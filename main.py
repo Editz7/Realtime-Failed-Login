@@ -1,16 +1,30 @@
 import subprocess
 import requests
 import time
+import configparser
+import smtplib
+from email.mime.text import MIMEText
 
-GOTIFY_URL = "##GOTIFY_URL##"
-GOTIFY_TOKEN = "##GOTIFY_TOKEN"
+# Read configuration from config.ini
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+# Gotify Configuration
+GOTIFY_ENABLED = config['gotify']['enabled'].lower() == 'y'
+GOTIFY_URL = config['gotify']['url']
+GOTIFY_TOKEN = config['gotify']['token']
+
+# Email Configuration
+EMAIL_ENABLED = config['email']['enabled'].lower() == 'y'
+SMTP_SERVER = config['email']['smtp_server']
+SMTP_PORT = int(config['email']['smtp_port'])
+SENDER_EMAIL = config['email']['sender_email']
+SENDER_PASSWORD = config['email']['sender_password']
+RECIPIENT_EMAIL = config['email']['recipient_email']
 
 last_failed_login = None
 
 def check_failed_logins():
-    """
-    Checks for the most recent failed login attempt and sends a notification if it's new.
-    """
     global last_failed_login
 
     try:
@@ -18,19 +32,23 @@ def check_failed_logins():
         failed_login = result.stdout.strip()
 
         if failed_login and failed_login != last_failed_login:
-            send_gotify_notification(failed_login)
+            send_notification(failed_login)
             last_failed_login = failed_login
 
     except Exception as e:
         print(f"Error checking failed logins: {e}")
 
+def send_notification(failed_login):
+    if GOTIFY_ENABLED:
+        send_gotify_notification(failed_login)
+    if EMAIL_ENABLED:
+        send_email_notification(failed_login)
+
 def send_gotify_notification(failed_login):
-    """
-    Sends a Gotify notification with the details of the new failed login attempt.
-    """
     data = {
         "title": "New Failed Login Attempt Detected",
         "message": failed_login,
+        "priority": 10  # Set priority as needed (1-5)
     }
     headers = {
         "X-Gotify-Key": GOTIFY_TOKEN
@@ -38,11 +56,26 @@ def send_gotify_notification(failed_login):
 
     try:
         response = requests.post(f"{GOTIFY_URL}/message", json=data, headers=headers)
-        response.raise_for_status()
+        response.raise_for_status()  # Raise an exception for error responses
     except Exception as e:
         print(f"Error sending Gotify notification: {e}")
+
+def send_email_notification(failed_login):
+    msg = MIMEText(failed_login)
+    msg['Subject'] = 'New Failed Login Attempt Detected'
+    msg['From'] = SENDER_EMAIL
+    msg['To'] = RECIPIENT_EMAIL
+
+    try:
+        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+        server.starttls()
+        server.login(SENDER_EMAIL, SENDER_PASSWORD)
+        server.sendmail(SENDER_EMAIL, RECIPIENT_EMAIL, msg.as_string())
+        server.quit()
+    except Exception as e:
+        print(f"Error sending email notification: {e}")
 
 if __name__ == "__main__":
     while True:
         check_failed_logins()
-        time.sleep(60)
+        time.sleep(60)  # Check every 60 seconds

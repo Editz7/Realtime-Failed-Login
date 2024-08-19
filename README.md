@@ -23,13 +23,14 @@ This Python script monitors for failed login attempts on your Linux system using
    cd Realtime-Failed-Login
 
 2. **Configure the script**
-   Open `main.py` and replace the placeholders `##GOTIFY_URL##` and `##GOTIFY_TOKEN##` with your actual Gotify server URL and app token.
+   Open `config.ini` and configure to your liking.
 
 ## Usage
 
 1. **Run the script:**
+   Must be ran as ``sudo`` because of ``lastb`` command.
    ```bash
-   python main.py
+   sudo python main.py
 
 2. **Monitor for notifications:**
-   The script will run in the backgroundand send Gotify notifications whenever a new failed login attempt is detected. Test this by doing a failed login on your system.
+   The script will run in the background and send notifications whenever a new failed login attempt is detected. Test this by doing a failed login on your system.
