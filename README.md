@@ -19,5 +19,5 @@ This Python script monitors for failed login attempts on your Linux system using
 
 1. **Clone the repository:**
    ```bash
-   git clone [invalid URL removed] 
-   cd your-repo-name
+   git clone https://github.com/Editz7/Realtime-Failed-Login
+   cd Realtime-Failed-Login
