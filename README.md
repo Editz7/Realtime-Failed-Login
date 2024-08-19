@@ -27,9 +27,9 @@ This Python script monitors for failed login attempts on your Linux system using
 
 ## Usage
 
-1. ## Run the script:
+1. **Run the script:**
    ```bash
    python main.py
 
-2. ## Monitor for notifications:
+2. **Monitor for notifications:**
    The script will run in the backgroundand send Gotify notifications whenever a new failed login attempt is detected. Test this by doing a failed login on your system.
