@@ -1,11 +1,11 @@
 # Failed Login Attempt Monitor Notifications
 
-This Python script monitors for failed login attempts on your Linux system using the `lastb` command and sends real-time notifications via Gotify/Email when a new failed login is detected.
+This Python script monitors for failed login attempts on your Linux system using the `lastb` command and sends real-time notifications via Gotify, Email and ntfy when a new failed login is detected.
 
 ## Features
 
 * **Real-time monitoring:** Detects and notifies you of new failed login attempts as they occur.
-* **Notifications:**  Sends clear and concise notifications to your Gotify-enabled devices or email.
+* **Notifications:**  Sends clear and concise notifications to your Gotify-enabled devices, email, and ntfy .
 * **Efficient:** Checks for new failed logins periodically to avoid excessive resource usage.
 
 ## Prerequisites
@@ -14,6 +14,7 @@ This Python script monitors for failed login attempts on your Linux system using
 * **Python 3:**  The script requires Python 3 to be installed.
 * **Gotify server and app:** If using Gotify, set up a Gotify server and create an app to obtain the necessary URL and token.
 * **Email:** If using email it is recommended to use an app password.
+* **Ntfy:** You can use ntfy default servers or setup your own..
 
 ## Installation
 

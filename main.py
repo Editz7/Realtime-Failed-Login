@@ -22,6 +22,11 @@ SENDER_EMAIL = config['email']['sender_email']
 SENDER_PASSWORD = config['email']['sender_password']
 RECIPIENT_EMAIL = config['email']['recipient_email']
 
+# ntfy Configuration
+NTFY_ENABLED = config['ntfy']['enabled'].lower() == 'y'
+NTFY_URL = config['ntfy']['url']
+NTFY_TOPIC = config['ntfy']['topic']
+
 last_failed_login = None
 
 def check_failed_logins():
@@ -43,6 +48,8 @@ def send_notification(failed_login):
         send_gotify_notification(failed_login)
     if EMAIL_ENABLED:
         send_email_notification(failed_login)
+    if NTFY_ENABLED:
+        send_ntfy_notification(failed_login)
 
 def send_gotify_notification(failed_login):
     data = {
@@ -56,7 +63,7 @@ def send_gotify_notification(failed_login):
 
     try:
         response = requests.post(f"{GOTIFY_URL}/message", json=data, headers=headers)
-        response.raise_for_status()  # Raise an exception for error responses
+        response.raise_for_status() 
     except Exception as e:
         print(f"Error sending Gotify notification: {e}")
 
@@ -75,7 +82,23 @@ def send_email_notification(failed_login):
     except Exception as e:
         print(f"Error sending email notification: {e}")
 
+def send_ntfy_notification(failed_login):
+    data = {
+        "title": "New Failed Login Attempt Detected",
+        "message": failed_login,
+        "priority": 8 
+    }
+
+    try:
+        response = requests.post(f"{NTFY_URL}/{NTFY_TOPIC}", json=data)
+        response.raise_for_status() 
+    except requests.exceptions.RequestException as e:
+        if isinstance(e, requests.exceptions.ConnectionError):
+            print(f"Error sending ntfy notification: Failed to connect to {NTFY_URL}. Check your network and ntfy URL configuration.")
+        else:
+            print(f"Error sending ntfy notification: {e}")
+
 if __name__ == "__main__":
     while True:
         check_failed_logins()
-        time.sleep(60)  # Check every 60 seconds
+        time.sleep(60)
