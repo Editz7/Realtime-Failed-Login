@@ -35,3 +35,10 @@ This Python script monitors for failed login attempts on your Linux system using
 
 2. **Monitor for notifications:**
    The script will run in the background and send notifications whenever a new failed login attempt is detected. Test this by doing a failed login on your system.
+
+### Road Map
+- [x] Ntfy Notifications
+- [x] Gotify Notifications
+- [x] Email Notifications
+- [ ] Telegram Notifications
+- [ ] Fix to fully show IP on notification
